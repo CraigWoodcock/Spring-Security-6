@@ -1,4 +1,13 @@
+- [Spring Security 6 Documentation.](#spring-security-6-documentation)
+  - [Project Overview](#project-overview)
+  - [Starting the Application.](#starting-the-application)
+  - [Adding Basic Security to Our Application.](#adding-basic-security-to-our-application)
+  - [](#)
+
+
 # Spring Security 6 Documentation.
+
+## Project Overview
 
 In this project, I will be creating a Banking Web App using Java, Spring and Spring Security 6.
 
