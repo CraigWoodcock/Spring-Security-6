@@ -3,6 +3,7 @@
   - [Starting the Application.](#starting-the-application)
   - [Adding Basic Security to Our Application.](#adding-basic-security-to-our-application)
   - [Configuring Static Credentials Using application.properties.](#configuring-static-credentials-using-applicationproperties)
+  - [Adding SecurityFilterChain](#adding-securityfilterchain)
   
 
 
@@ -58,6 +59,28 @@ spring.security.user.password=<password>
 ```
 
 We can now log into the web app using the credentials that we set. We don't need to make any other changes to our code.
+
+## Adding SecurityFilterChain
+
+we can add a securityfilterChain to define which endpoints we want to secure. we can do that by creating a config package and a class inside called Securityconfig. this should contain the following code:
+
+- This code snippet will secure all endpoints behind the login screen until the user enters the correct credentials.
+
+```
+@Configuration
+public class SecurityConfig {
+
+    @Bean
+    SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
+        http.authorizeHttpRequests((requests) -> requests.anyRequest().authenticated());
+        http.formLogin(withDefaults());
+        http.httpBasic(withDefaults());
+        return http.build();
+    }
+
+}
+
+```
 
 
 

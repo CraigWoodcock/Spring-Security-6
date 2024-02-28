@@ -8,6 +8,6 @@ public class CardsController {
 
     @GetMapping("/myCards")
     public String getCardDetails(){
-        return "Card details returned from DB";
+        return "Card details returned from DataBase";
     }
 }
