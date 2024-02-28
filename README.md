@@ -82,6 +82,21 @@ public class SecurityConfig {
 
 ```
 
+We can add filters to dictate the endpoints that we want to secure by changing the code to match this:
 
+- This code snippet will allow all access to /notices, /contact and /welcome pages on our webapp. It will only allow authorised users to access all of the remaining endpoints. 
+
+```
+@Bean
+    SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
+        http.authorizeHttpRequests((requests) -> requests
+                .requestMatchers("/myAccount","/myCards", "/myLoans", "/myBalance").authenticated()
+                .requestMatchers("/notices", "/contact", "/welcome").permitAll());
+                http.formLogin(Customizer.withDefaults());
+                http.httpBasic(Customizer.withDefaults());
+        return http.build();
+    }
+
+```
 
 
