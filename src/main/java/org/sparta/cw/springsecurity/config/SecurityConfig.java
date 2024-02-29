@@ -27,7 +27,7 @@ public class SecurityConfig {
     }
 
     @Bean
-    public InMemoryUserDetailsManager userDetailsManager(){
+    public InMemoryUserDetailsManager userDetailsService(){
         UserDetails admin = User.withUsername("admin")
                 .password("password")
                 .authorities("admin")
@@ -43,9 +43,9 @@ public class SecurityConfig {
     public PasswordEncoder passwordEncoder(){
         return NoOpPasswordEncoder.getInstance();
     }
-
+    // Create users with password encoder.
 //    @Bean
-//    public InMemoryUserDetailsManager userDetailsManager(){
+//    public InMemoryUserDetailsManager userDetailsService(){
 //        UserDetails admin = User.withDefaultPasswordEncoder()
 //                .username("admin")
 //                .password("password")
