@@ -132,6 +132,7 @@ Or we can permit all traffic to all endpoints, replace `.denyAll()` with `.permi
 we can configure our own users directly within our application. This is not recommended for production purposes but can be ideal for testing purposes where more than one developer needs access to the application.
 
  - This code snippet will create a user called 'admin' with admin authorisation and a user called 'user' with access to 'read' only.
+ - The password will be encoded by the DefaultPasswordEncoder but this could still be retrieved in plain text and so this is not a production recommended approach.
 
 ```
  @Bean
