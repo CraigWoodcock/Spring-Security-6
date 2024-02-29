@@ -4,6 +4,7 @@
   - [Adding Basic Security to Our Application.](#adding-basic-security-to-our-application)
   - [Configuring Static Credentials Using application.properties.](#configuring-static-credentials-using-applicationproperties)
   - [Adding SecurityFilterChain](#adding-securityfilterchain)
+  - [Configuring Users using InMemoryUserDetailsManager](#configuring-users-using-inmemoryuserdetailsmanager)
   
 
 
@@ -125,3 +126,27 @@ Or we can permit all traffic to all endpoints, replace `.denyAll()` with `.permi
         return http.build();
     }
 ```
+
+## Configuring Users using InMemoryUserDetailsManager
+
+we can configure our own users directly within our application. This is not recommended for production purposes but can be ideal for testing purposes where more than one developer needs access to the application.
+
+ - This code snippet will create a user called 'admin' with admin authorisation and a user called 'user' with access to 'read' only.
+
+```
+ @Bean
+    public InMemoryUserDetailsManager userDetailsManager(){
+        UserDetails admin = User.withDefaultPasswordEncoder()
+                .username("admin")
+                .password("password")
+                .authorities("admin")
+                .build();
+        UserDetails user = User.withDefaultPasswordEncoder()
+                .username("user")
+                .password("password")
+                .authorities("read")
+                .build();
+        return new InMemoryUserDetailsManager(admin, user);
+    }
+```
+
