@@ -7,7 +7,7 @@
   - [Configuring Users using InMemoryUserDetailsManager](#configuring-users-using-inmemoryuserdetailsmanager)
   - [Configuring InMemoryUsers without DefaultPasswordEncoder](#configuring-inmemoryusers-without-defaultpasswordencoder)
   - [Creating MySQL database to store User Credentials.](#creating-mysql-database-to-store-user-credentials)
-  - [Configuring SecurityConfig to use MySQL database.](#configuring-securityconfig-to-use-mysql-database)
+  - [Configuring the Application to use MySQL database.](#configuring-the-application-to-use-mysql-database)
   
 
 
@@ -231,11 +231,15 @@ insert into authorities(username, authority) values("john", "read");
 
 select * from users;
 select * from authorities;
-
-
 ```
 
-## Configuring SecurityConfig to use MySQL database.
+## Configuring the Application to use MySQL database.
+ 
+First we need to add the following dependencies to the pom.xml file:
+  - jdbc allows spring to communicate with the database.
+  - jpa allows spring to create entities from the database and includes Hibernate for ORM(Object-Relational Mapping).
+  - mysql driver ensures that the application can connect to the MySQL database.
+
 ```
     <dependency>
         <groupId>org.springframework.boot</groupId>
