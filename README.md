@@ -99,4 +99,29 @@ We can add filters to dictate the endpoints that we want to secure by changing t
 
 ```
 
+We can Deny all traffic to all endpoints, this might be for testing purposes or when pushing a large update:
+We simply replace `.requestMatchers().auntheniticated` and `.requestMatchers.permitAll()` with `anyRequest().denyAll()`
 
+```
+@Bean
+    SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
+        http.authorizeHttpRequests((requests) -> requests
+                .anyRequest().denyAll());
+        http.formLogin(Customizer.withDefaults());
+        http.httpBasic(Customizer.withDefaults());
+        return http.build();
+    }
+```
+
+Or we can permit all traffic to all endpoints, replace `.denyAll()` with `.permitAll()`:
+
+```
+ @Bean
+    SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
+        http.authorizeHttpRequests((requests) -> requests
+                .anyRequest().permitAll());
+        http.formLogin(Customizer.withDefaults());
+        http.httpBasic(Customizer.withDefaults());
+        return http.build();
+    }
+```
