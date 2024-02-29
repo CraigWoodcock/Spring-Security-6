@@ -6,6 +6,8 @@
   - [Adding SecurityFilterChain](#adding-securityfilterchain)
   - [Configuring Users using InMemoryUserDetailsManager](#configuring-users-using-inmemoryuserdetailsmanager)
   - [Configuring InMemoryUsers without DefaultPasswordEncoder](#configuring-inmemoryusers-without-defaultpasswordencoder)
+  - [Creating MySQL database to store User Credentials.](#creating-mysql-database-to-store-user-credentials)
+  - [Configuring SecurityConfig to use MySQL database.](#configuring-securityconfig-to-use-mysql-database)
   
 
 
@@ -182,4 +184,69 @@ Sometimes we may want/need our passwords to be plain text. We can achieve this b
         return NoOpPasswordEncoder.getInstance();
     }
 
+```
+
+## Creating MySQL database to store User Credentials.
+
+A more secure approach to creating and storing users would be to use a database. A good example would be a 'Relational Database' on AWS RDS using MySQL. I chose to use MySQL WorkBench, I can create a script of this database and deploy to aws in a 2 tier architecture later on.
+
+- This MySQL script will create a database, create tables and populate the tables with required data.
+- It auto-increments the 'id' for both tables and starts the auto-increment at 101.
+- Users table requires a unique 'username'.
+- Authorities table uses a combination of username and authority(username+authority) to ensure unique entries.
+  - This means we could still have multiple entries with the same username as long as the authority is different for each. 
+
+```
+DROP DATABASE IF EXISTS `SpringSecurity`;  
+
+CREATE DATABASE `SpringSecurity`;
+
+USE `SpringSecurity`;
+
+drop table if exists users;
+
+create table users(
+ id int auto_increment primary key,
+ username varchar(50) unique not null,
+ password varchar(50) not null,
+ enabled boolean not null
+)auto_increment=101;
+
+drop table if exists authorities;
+
+create table authorities (
+	id int auto_increment primary key not null,
+	username varchar(50) not null,
+	authority varchar(50) not null
+)auto_increment=101;
+
+create unique index ix_auth_username on authorities (username,authority);
+
+
+insert into users (username, password, enabled) values ("craig", "password", true);
+insert into users (username, password, enabled) values ("john", "john123", true);
+
+insert into authorities(username, authority) values("craig", "admin");
+insert into authorities(username, authority) values("john", "read");
+
+select * from users;
+select * from authorities;
+
+
+```
+
+## Configuring SecurityConfig to use MySQL database.
+```
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-data-jdbc</artifactId>
+    </dependency>
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-data-jpa</artifactId>
+    </dependency>
+    <dependency>
+        <groupId>com.mysql</groupId>
+        <artifactId>mysql-connector-j</artifactId>
+    </dependency>
 ```
