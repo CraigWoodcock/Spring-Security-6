@@ -254,3 +254,33 @@ First we need to add the following dependencies to the pom.xml file:
         <artifactId>mysql-connector-j</artifactId>
     </dependency>
 ```
+
+As we are no longer using InMemoryUserDetailsManager, we can comment out or delete this method:
+
+```
+    // create users without defaultPassowrdEncoder
+//    @Bean
+//    public InMemoryUserDetailsManager userDetailsService(){
+//        UserDetails admin = User.withUsername("admin")
+//                .password("password")
+//                .authorities("admin")
+//                .build();
+//        UserDetails user = User.withUsername("user")
+//                .password("password123")
+//                .authorities("read")
+//                .build();
+//        return new InMemoryUserDetailsManager(admin, user);
+//    }
+
+```
+
+Instead, we will be calling UserDetailsService and passing in Datasource:
+ - This will allow our spring app to use the datasource to retrieve user details.
+
+```
+ @Bean
+    public UserDetailsService userDetailsService(DataSource dataSource){
+        return new JdbcUserDetailsManager(dataSource);
+    }
+
+```
