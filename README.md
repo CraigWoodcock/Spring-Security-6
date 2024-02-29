@@ -5,6 +5,7 @@
   - [Configuring Static Credentials Using application.properties.](#configuring-static-credentials-using-applicationproperties)
   - [Adding SecurityFilterChain](#adding-securityfilterchain)
   - [Configuring Users using InMemoryUserDetailsManager](#configuring-users-using-inmemoryuserdetailsmanager)
+  - [Configuring InMemoryUsers without DefaultPasswordEncoder](#configuring-inmemoryusers-without-defaultpasswordencoder)
   
 
 
@@ -155,5 +156,30 @@ Since we now have several users being created via the UserDetailsManager, we no 
 ```
 #spring.security.user.name=admin
 #spring.security.user.password=password
+
+```
+
+## Configuring InMemoryUsers without DefaultPasswordEncoder
+
+Sometimes we may want/need our passwords to be plain text. We can achieve this by creating users without the password encoder and creating a password encoder bean to create p;ain text passwords;
+
+```
+  @Bean
+    public InMemoryUserDetailsManager userDetailsManager(){
+        UserDetails admin = User.withUsername("admin")
+                .password("password")
+                .authorities("admin")
+                .build();
+        UserDetails user = User.withUsername("user")
+                .password("password123")
+                .authorities("read")
+                .build();
+        return new InMemoryUserDetailsManager(admin, user);
+    }
+
+     @Bean
+    public PasswordEncoder passwordEncoder(){
+        return NoOpPasswordEncoder.getInstance();
+    }
 
 ```
