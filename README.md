@@ -150,4 +150,10 @@ we can configure our own users directly within our application. This is not reco
         return new InMemoryUserDetailsManager(admin, user);
     }
 ```
+Since we now have several users being created via the UserDetailsManager, we no longer need the static credentials we hardcoded into our application.properties file. I will comment them out for now, but we can remove them completely:
 
+```
+#spring.security.user.name=admin
+#spring.security.user.password=password
+
+```

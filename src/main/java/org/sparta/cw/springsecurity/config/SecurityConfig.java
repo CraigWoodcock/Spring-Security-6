@@ -33,7 +33,7 @@ public class SecurityConfig {
                 .build();
         UserDetails user = User.withDefaultPasswordEncoder()
                 .username("user")
-                .password("password")
+                .password("password123")
                 .authorities("read")
                 .build();
         return new InMemoryUserDetailsManager(admin, user);
