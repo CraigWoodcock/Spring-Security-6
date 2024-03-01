@@ -7,6 +7,8 @@
   - [Configuring Users using InMemoryUserDetailsManager](#configuring-users-using-inmemoryuserdetailsmanager)
   - [Configuring InMemoryUsers without DefaultPasswordEncoder](#configuring-inmemoryusers-without-defaultpasswordencoder)
   - [Creating MySQL database to store User Credentials.](#creating-mysql-database-to-store-user-credentials)
+  - [Using AWS RDS to Create a MySQL Database.](#using-aws-rds-to-create-a-mysql-database)
+    - [How to Create an AWS RDS MySQL Database.](#how-to-create-an-aws-rds-mysql-database)
   - [Configuring the Application to use MySQL database.](#configuring-the-application-to-use-mysql-database)
   
 
@@ -188,7 +190,7 @@ Sometimes we may want/need our passwords to be plain text. We can achieve this b
 
 ## Creating MySQL database to store User Credentials.
 
-A more secure approach to creating and storing users would be to use a database. A good example would be a 'Relational Database' on AWS RDS using MySQL. I chose to use MySQL WorkBench, I can create a script of this database and deploy to aws in a 2 tier architecture later on.
+A more secure approach to creating and storing users would be to use a database. A good example would be a 'Relational Database' on AWS RDS using MySQL. I chose to use MySQL WorkBench, I can create a script of this database and deploy to aws in a 2 tier architecture later on. 
 
 - This MySQL script will create a database, create tables and populate the tables with required data.
 - It auto-increments the 'id' for both tables and starts the auto-increment at 101.
@@ -233,6 +235,22 @@ select * from users;
 select * from authorities;
 ```
 
+## Using AWS RDS to Create a MySQL Database.
+
+Using the previous approach could pose certain risks such as a loss of data due to disaster etc, as the database would be stored locally and then migrated to an aws ec2 instance. Another approach could be to create an AWS RDS Database using MySQL, we can then connect MySQL workbench to the AWS RDS instance to create the required fields. We can achieve this by executing the same script as in the previous method.
+
+ ### How to Create an AWS RDS MySQL Database.
+ 1. Sign into AWS Console, head to 'RDS' and Select 'Create Database'.
+ 2. Select 'Standard Create' and then Select 'MySQL' under 'Engine options'.
+ 3. We are only using a small database and so to save costs, be sure to select 'Free Tier' under 'Templates'
+ 4. Now set the database name(this must be unique across all instances owned by your AWS account in the current region), username, password.
+ 5. Under 'Connectivity', We need to change the 'Public Access' setting, We need to choose 'Yes'.
+ 6. If you have a Security Group already then you can select this now. If not, create one with inbound rules to allow all traffic on port 3306(MySQL).
+ 7. Now select 'Create Database'
+ 8. Now go to the database settings an copy the 'Endpoint',
+ 9. Head to MySQL workbench, Create a new Connection and paste the endpoint in as the hostname, Ensure the port is 3306, enter the database username, select 'Store in Vault...' and enter the database password. Now 'test connection'. If successful, press 'OK'.
+ 10. Now we can run the sql script from earlier to create the database and tables.      
+
 ## Configuring the Application to use MySQL database.
  
 First we need to add the following dependencies to the pom.xml file:
@@ -254,6 +272,7 @@ First we need to add the following dependencies to the pom.xml file:
         <artifactId>mysql-connector-j</artifactId>
     </dependency>
 ```
+
 
 As we are no longer using InMemoryUserDetailsManager, we can comment out or delete this method:
 
@@ -283,4 +302,18 @@ Instead, we will be calling UserDetailsService and passing in Datasource:
         return new JdbcUserDetailsManager(dataSource);
     }
 
+```
+
+Now we need to add the database details to our application.properties file so that our application can communicate with the database. Add the following lines:
+
+```
+spring.datasource.url=jdbc:mysql://<aws-endpoint>:3306/<DatabaseName>  - This points to the AWS database.
+spring.datasource.username=<db username>
+spring.datasource.password=<db password>
+
+```
+If using a local database then we can modify the url as follows:
+
+```
+spring.datasource.url=jdbc:mysql://localhost:3306/SpringSecurity
 ```
