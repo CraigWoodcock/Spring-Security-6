@@ -163,7 +163,7 @@ Since we now have several users being created via the UserDetailsManager, we no 
 
 ## Configuring InMemoryUsers without DefaultPasswordEncoder
 
-Sometimes we may want/need our passwords to be plain text. We can achieve this by creating users without the password encoder and creating a password encoder bean to create p;ain text passwords;
+Sometimes we may want/need our passwords to be plain text. We can achieve this by creating users without the password encoder and creating a password encoder bean to create plain text passwords. The NoOpPasswordEncoder doesn't encode passwords and so the IDE will usually warn us that this is an unsafe approach. It is fine for testing purposes. 
 
 ```
   @Bean
@@ -275,7 +275,7 @@ As we are no longer using InMemoryUserDetailsManager, we can comment out or dele
 ```
 
 Instead, we will be calling UserDetailsService and passing in Datasource:
- - This will allow our spring app to use the datasource to retrieve user details.
+ - This will allow our spring app to use the datasource to retrieve user details from the database.
 
 ```
  @Bean
