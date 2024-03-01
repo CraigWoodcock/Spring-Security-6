@@ -306,6 +306,8 @@ Instead, we will be calling UserDetailsService and passing in Datasource:
 
 Now we need to add the database details to our application.properties file so that our application can communicate with the database. Add the following lines:
 
+ - Important Note! - We only add these credentials to the application.properties file for testing purposes. For a production ready deployment, we would give these values to our DevOps team who will inject them as Environment variables!
+
 ```
 spring.datasource.url=jdbc:mysql://<aws-endpoint>:3306/<DatabaseName>  - This points to the AWS database.
 spring.datasource.username=<db username>
