@@ -10,6 +10,7 @@
   - [Using AWS RDS to Create a MySQL Database.](#using-aws-rds-to-create-a-mysql-database)
     - [How to Create an AWS RDS MySQL Database.](#how-to-create-an-aws-rds-mysql-database)
   - [Configuring the Application to use MySQL database.](#configuring-the-application-to-use-mysql-database)
+  - [Configuring Custom Tables and custom UserDetailsService.](#configuring-custom-tables-and-custom-userdetailsservice)
   
 
 
@@ -295,6 +296,7 @@ As we are no longer using InMemoryUserDetailsManager, we can comment out or dele
 
 Instead, we will be calling UserDetailsService and passing in Datasource:
  - This will allow our spring app to use the datasource to retrieve user details from the database.
+ - This methof uses jdbcUserDetailsManager.
 
 ```
  @Bean
@@ -318,4 +320,95 @@ If using a local database then we can modify the url as follows:
 
 ```
 spring.datasource.url=jdbc:mysql://localhost:3306/SpringSecurity
+```
+
+## Configuring Custom Tables and custom UserDetailsService.
+
+We can use our own custom tables to perform authentication instead of the jdbc pre defined tables.
+We add the following table to the database:
+
+```
+CREATE TABLE `customer` (
+  `id` int auto_increment primary key,
+  `username` varchar(45) unique not null, 
+  `email` varchar(45) NOT NULL,
+  `pwd` varchar(200) NOT NULL,
+  `role` varchar(45) NOT NULL
+);
+
+INSERT INTO `customer` (`username`, `email`, `pwd`, `role`) VALUES ('john', 'johndoe@example.com', '12345', 'admin');
+
+
+```
+
+Then in IntellIJ we create an entity of the table (Customer) and a repository (CustomerRepository).
+ 
+We then create a custom SecurityConfig file as follows:
+
+- This file resides in the 'config' package. As the class performs com plex operations, it acts as a 'Service Layer' and so we annotate the class with @Service. Without this annotation, we cannot use the '@Autowired' annotation.
+- The method checks that the entered username is stored in the database, if it is then the 'customer' object is returned and authenticated.
+
+```
+@Service
+public class SimpleBankUserDetails implements UserDetailsService {
+
+    @Autowired
+    CustomerRepository customerRepository;
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        String userName,password = null;
+        List<GrantedAuthority> authorities = null;
+        List<Customer> customer = customerRepository.findByUsername(username);
+        if(customer.size() ==0){
+            throw new UsernameNotFoundException("Username Not Found for user: "+username);
+        }else{
+            userName = customer.get(0).getUsername();
+            password = customer.get(0).getPwd();
+            authorities = new ArrayList<>();
+            authorities.add(new SimpleGrantedAuthority(customer.get(0).getRole()));
+        }
+
+        return new User(username,password,authorities);
+    }
+}
+
+```
+
+As it stands, we now have two authentication providers, Our custom config class(SimpleBankUserDetails) is overriding the loadUserByUsername method from the UserDetailsService class, we have a conflict in our code, as the jdbcUserDetailsManager also uses the same class. 
+
+To correct this, we need to remove or comment out the following from our SecurityConfig class:
+
+```
+//    @Bean
+//    public UserDetailsService userDetailsService(DataSource dataSource){
+//        return new JdbcUserDetailsManager(dataSource);
+//    }
+
+```
+
+The SecurityConfig class should now look like this:
+
+```
+@Configuration
+    public class SecurityConfig {
+
+        // Custom security filter allows authenticated traffic to secured endpoints and allows all traffic to
+        // unsecured endpoints.
+        @Bean
+        SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
+            http.authorizeHttpRequests((requests) -> requests
+                    .requestMatchers("/myAccount","/myCards", "/myLoans", "/myBalance").authenticated()
+                    .requestMatchers("/notices", "/contact", "/welcome").permitAll());
+                    http.formLogin(Customizer.withDefaults());
+                    http.httpBasic(Customizer.withDefaults());
+            return http.build();
+        }
+
+        @Bean
+        public PasswordEncoder passwordEncoder(){
+            return NoOpPasswordEncoder.getInstance();
+        }
+    }
+
 ```

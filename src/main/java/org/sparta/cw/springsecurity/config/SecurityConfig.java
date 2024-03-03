@@ -15,19 +15,25 @@ import org.springframework.security.web.SecurityFilterChain;
 
 import javax.sql.DataSource;
 
-@Configuration
-public class SecurityConfig {
+    @Configuration
+    public class SecurityConfig {
 
-    // Custom security filter allows authenticated traffic to secured endpoints and allows all traffic to
-    // unsecured endpoints.
-    @Bean
-    SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
-        http.authorizeHttpRequests((requests) -> requests
-                .requestMatchers("/myAccount","/myCards", "/myLoans", "/myBalance").authenticated()
-                .requestMatchers("/notices", "/contact", "/welcome").permitAll());
-                http.formLogin(Customizer.withDefaults());
-                http.httpBasic(Customizer.withDefaults());
-        return http.build();
+        // Custom security filter allows authenticated traffic to secured endpoints and allows all traffic to
+        // unsecured endpoints.
+        @Bean
+        SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
+            http.authorizeHttpRequests((requests) -> requests
+                    .requestMatchers("/myAccount","/myCards", "/myLoans", "/myBalance").authenticated()
+                    .requestMatchers("/notices", "/contact", "/welcome").permitAll());
+                    http.formLogin(Customizer.withDefaults());
+                    http.httpBasic(Customizer.withDefaults());
+            return http.build();
+        }
+
+        @Bean
+        public PasswordEncoder passwordEncoder(){
+            return NoOpPasswordEncoder.getInstance();
+        }
     }
 
 //    @Bean
@@ -36,12 +42,9 @@ public class SecurityConfig {
 //    }
 
     // invoke passwordEncoder without encoding password.
-    @Bean
-    public PasswordEncoder passwordEncoder(){
-        return NoOpPasswordEncoder.getInstance();
-    }
 
-    // create users without defaultPassowrdEncoder
+
+    // create users without defaultPasswordEncoder
 //    @Bean
 //    public InMemoryUserDetailsManager userDetailsService(){
 //        UserDetails admin = User.withUsername("admin")
@@ -90,6 +93,6 @@ public class SecurityConfig {
 //        http.httpBasic(Customizer.withDefaults());
 //        return http.build();
 //    }
-
-
-}
+//
+//
+//}

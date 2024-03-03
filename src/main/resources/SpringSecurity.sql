@@ -4,7 +4,7 @@ CREATE DATABASE `SpringSecurity`;
 
 USE `SpringSecurity`;
 
-drop table if exists users;
+drop table if exists `users`;
 
 create table users(
  id int auto_increment primary key,
@@ -30,14 +30,17 @@ insert into users (username, password, enabled) values ("john", "john123", true)
 insert into authorities(username, authority) values("craig", "admin");
 insert into authorities(username, authority) values("john", "read");
 
--- CREATE TABLE `customer` (
---   `id` int auto_increment primary key,
---   `email` varchar(45) NOT NULL,
---   `pwd` varchar(200) NOT NULL,
---   `role` varchar(45) NOT NULL
--- );
+drop table if exists `customer`; 
 
--- INSERT INTO `customer` (`email`, `pwd`, `role`) VALUES ('johndoe@example.com', '54321', 'admin');
+CREATE TABLE `customer` (
+  `id` int auto_increment primary key,
+  `username` varchar(45) unique not null, 
+  `email` varchar(45) NOT NULL,
+  `pwd` varchar(200) NOT NULL,
+  `role` varchar(45) NOT NULL
+);
 
--- select * from users;
--- select * from authorities;
+INSERT INTO `customer` (`username`, `email`, `pwd`, `role`) VALUES ('john', 'johndoe@example.com', '12345', 'admin');
+
+select * from users;
+select * from authorities;
