@@ -13,6 +13,7 @@
   - [Configuring Custom Tables and custom UserDetailsService.](#configuring-custom-tables-and-custom-userdetailsservice)
   - [Creating a Controller to Allow New Users to be Created.](#creating-a-controller-to-allow-new-users-to-be-created)
   - [Managing Passwords With PasswordEncoders.](#managing-passwords-with-passwordencoders)
+  - [Implementing a Custom AuthenticationProvider.](#implementing-a-custom-authenticationprovider)
   
 
 
@@ -518,5 +519,9 @@ We can simplify this code by making it inline as we do not need to store the has
  customer.setPwd(passwordEncoder.encode(customer.getPwd()));           
 
 ```
+
+## Implementing a Custom AuthenticationProvider.
+
+
 
 
