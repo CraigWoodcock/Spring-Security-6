@@ -502,6 +502,21 @@ All we need to do is change the PasswordEncoder() method in our SecurityConfig c
 
 ```
 
+Then we need to modify our registerUser() method in our LoginController. Here we need to retrieve the entered password, convert it to a hashed value and then save it to the database.
 
+we do that by adding these lines:
+
+```
+ String hashedPwd = passwordEncoder.encode(customer.getPwd());
+ customer.setPwd(hashedPwd);
+
+```
+
+We can simplify this code by making it inline as we do not need to store the hashedPwd as a variable as it will not bed used later on:
+
+```
+ customer.setPwd(passwordEncoder.encode(customer.getPwd()));           
+
+```
 
 
