@@ -481,6 +481,11 @@ We also need to add a rule to disable csrf:
 
 As I have stated several times, we have been using plain text paswords up to this point. This is not secure as passwords are being stored and authenticated in plain text. This means that the password could be obtained quite easily by third parties.
 
+Since we are stepping up security, we will be using the 'Hashing' method. this is the most secure form of encoding/encryption. 
+
+- Encoding - converts plain text into an ecoded string, this can be reversed by a simple decoding algorithm such as base64 encode/decode.
+- Encrypting - uses a combination of on encryption algorithm and secret key to encrypt the password. This can also be reversed if the algorithm and secret key are obtained and used in the decryption process.
+- Hashing - uses a secure hashing algorithm that returns a Hashstring, this is compared to the hashstring that is generated when the user enters a password and if it matches then the password is authenticated. This process cannot be reversed.
 
 
 
