@@ -488,6 +488,19 @@ Since we are stepping up security, we will be using the 'Hashing' method. this i
 - Hashing - uses a secure hashing algorithm that returns a Hashstring, this is compared to the hashstring that is generated when the user enters a password and if it matches then the password is authenticated. This process cannot be reversed.
 
 
+Spring gives us several built-in password encoders, we will be using BCryptPasswordEncoder. This hashes the entered password before it is saved to the database. when the password is entered again, it is hashed and compared to the hash value of the stored password.
+
+All we need to do is change the PasswordEncoder() method in our SecurityConfig class like so:
+
+- Instead of returning NoOpPasswordEncoder, we return 'new BCryptPasswordEncoder()'.
+
+```
+  @Bean
+        public PasswordEncoder passwordEncoder(){
+            return new BCryptPasswordEncoder();
+        }
+
+```
 
 
 
