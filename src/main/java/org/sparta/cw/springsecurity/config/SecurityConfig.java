@@ -22,9 +22,11 @@ import javax.sql.DataSource;
         // unsecured endpoints.
         @Bean
         SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
-            http.authorizeHttpRequests((requests) -> requests
+            http
+                    .csrf((csrf) -> csrf.disable())
+                    .authorizeHttpRequests((requests) -> requests
                     .requestMatchers("/myAccount","/myCards", "/myLoans", "/myBalance").authenticated()
-                    .requestMatchers("/notices", "/contact", "/welcome").permitAll());
+                    .requestMatchers("/notices", "/contact", "/welcome","/register").permitAll());
                     http.formLogin(Customizer.withDefaults());
                     http.httpBasic(Customizer.withDefaults());
             return http.build();

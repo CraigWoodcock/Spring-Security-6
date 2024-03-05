@@ -416,5 +416,67 @@ The SecurityConfig class should now look like this:
 
 ## Creating a Controller to Allow New Users to be Created.
 
+Since we now have custom users and tables, we need to create a Rest Controller to be able to create users.
+
+- Start by creating a new class inside the 'controller' package and call it 'LoginController'.
+- This class needs to be annotated with the '@Restcontroller.
+- We will need to 'Autowire' the CustomerRepository so that spring can create beans where needed.
+- We will then need to add a '@PostMapping' method to 'Post' a new entry to the database.
+  - This method Takes in a 'Customer' object as the RequestBody.
+  - It then calls the 'customerRepository.save()' method, taking in the new customer object as a parameter to save the new customer to the database.
+  - We invoke the 'ResponseEntity' class to return the http response based on whether the user is created successfully or not.
+
+```
+  @RestController
+public class LoginController {
+
+    @Autowired
+    CustomerRepository customerRepository;
+
+    @PostMapping("/register")
+    public ResponseEntity<String> registerUser(@RequestBody Customer customer){
+        Customer savedCustomer = null;
+        ResponseEntity response = null;
+        try {
+            savedCustomer = customerRepository.save(customer);
+            if (savedCustomer.getId()>0){
+                response = ResponseEntity
+                        .status(HttpStatus.CREATED)
+                        .body("User Successfully Registered!");
+            }
+        }catch (Exception e){
+            response = ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("An exception occured: "+ e.getMessage());
+        }
+
+        return response;
+    }
+
+}  
+
+```
+
+Next we will need to modify the 'SecurityConfig' class to allow access to our new endpoint("/register"). We do this by adding the endpoint to our '.permitAll()' rules from our 'SecurityChainFilter'
+
+We also need to add a rule to disable csrf:
+
+```
+@Bean
+        SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
+            http
+                    .csrf((csrf) -> csrf.disable())
+                    .authorizeHttpRequests((requests) -> requests
+                    .requestMatchers("/myAccount","/myCards", "/myLoans", "/myBalance").authenticated()
+                    .requestMatchers("/notices", "/contact", "/welcome","/register").permitAll());
+                    http.formLogin(Customizer.withDefaults());
+                    http.httpBasic(Customizer.withDefaults());
+            return http.build();
+        }
+
+```
+
+
+
 
 

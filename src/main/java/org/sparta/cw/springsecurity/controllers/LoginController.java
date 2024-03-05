@@ -31,7 +31,7 @@ public class LoginController {
                     .status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("An exception occured: "+ e.getMessage());
         }
-        
+
         return response;
     }
 
