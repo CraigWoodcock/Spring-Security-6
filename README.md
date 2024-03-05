@@ -12,6 +12,7 @@
   - [Configuring the Application to use MySQL database.](#configuring-the-application-to-use-mysql-database)
   - [Configuring Custom Tables and custom UserDetailsService.](#configuring-custom-tables-and-custom-userdetailsservice)
   - [Creating a Controller to Allow New Users to be Created.](#creating-a-controller-to-allow-new-users-to-be-created)
+  - [Managing Passwords With PasswordEncoders.](#managing-passwords-with-passwordencoders)
   
 
 
@@ -475,6 +476,12 @@ We also need to add a rule to disable csrf:
         }
 
 ```
+
+## Managing Passwords With PasswordEncoders.
+
+As I have stated several times, we have been using plain text paswords up to this point. This is not secure as passwords are being stored and authenticated in plain text. This means that the password could be obtained quite easily by third parties.
+
+
 
 
 
