@@ -11,6 +11,7 @@
     - [How to Create an AWS RDS MySQL Database.](#how-to-create-an-aws-rds-mysql-database)
   - [Configuring the Application to use MySQL database.](#configuring-the-application-to-use-mysql-database)
   - [Configuring Custom Tables and custom UserDetailsService.](#configuring-custom-tables-and-custom-userdetailsservice)
+  - [Creating a Controller to Allow New Users to be Created.](#creating-a-controller-to-allow-new-users-to-be-created)
   
 
 
@@ -412,3 +413,8 @@ The SecurityConfig class should now look like this:
     }
 
 ```
+
+## Creating a Controller to Allow New Users to be Created.
+
+
+
