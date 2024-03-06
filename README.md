@@ -522,6 +522,46 @@ We can simplify this code by making it inline as we do not need to store the has
 
 ## Implementing a Custom AuthenticationProvider.
 
+To implement our own custom AuthenticatiionProvider, we first need to create a new class in the 'confgi' pakage, I called this 'SimpleBankUsernamePasswordAuthenticationProvider'. This class needs to implement the 'AuthenticationProvider' interface.
+
+Since we are implementing an interface, we need to import the methods that the interface uses, do this in IntellIJ idea by highlighting the method name and choosing 'Import Methods'.
+
+We will need to '@Autowire' the CustomerRespository and the PasswordEncoder and we will need to annotate the class with '@Component'.
+
+Now we can start to write the Logic inside the methods. The authenticate() method will use the same business logic as our loadUserByUsername method in our SimpleBankUserDetails class, with a few minor tweaks:
+
+```
+ @Override
+    public Authentication authenticate(Authentication authentication) throws AuthenticationException {
+        String username = authentication.getName();
+        String pwd = authentication.getCredentials().toString();
+        List<Customer> customer = customerRepository.findByUsername(username);
+        if (customer.size()>0){
+            if (passwordEncoder.matches(pwd,customer.get(0).getPwd())){
+                List<GrantedAuthority> authorities = new ArrayList<>();
+                authorities.add(new SimpleGrantedAuthority(customer.get(0).getRole()));
+                return new UsernamePasswordAuthenticationToken(username,pwd,authorities);
+            }else{
+                throw new BadCredentialsException("Invalid Password, Please Try Again!");
+            }
+        }else {
+            throw new BadCredentialsException("Invalid Credentials, No User Found!!");
+        }
+    }
+
+```
+
+We need to modify the 'supports' class to return a new UsernamePasswordAuthenticationToken like so:
+
+```
+@Override
+    public boolean supports(Class<?> authentication) {
+        return (UsernamePasswordAuthenticationToken.class.isAssignableFrom(authentication));
+    }
+
+```
+
+Now our AuthenticationProvider is doing the same job as the LoadUserByUsername class in our SimpleBankUserDetails class, we can get rid of that class all together
 
 
 
