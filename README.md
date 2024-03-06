@@ -14,6 +14,7 @@
   - [Creating a Controller to Allow New Users to be Created.](#creating-a-controller-to-allow-new-users-to-be-created)
   - [Managing Passwords With PasswordEncoders.](#managing-passwords-with-passwordencoders)
   - [Implementing a Custom AuthenticationProvider.](#implementing-a-custom-authenticationprovider)
+  - [CORS(Cross-Origin Resource Sharing) \& CSRF(Cross-Site Request Forgery) with Spring Security](#corscross-origin-resource-sharing--csrfcross-site-request-forgery-with-spring-security)
   
 
 
@@ -562,6 +563,9 @@ We need to modify the 'supports' class to return a new UsernamePasswordAuthentic
 ```
 
 Now our AuthenticationProvider is doing the same job as the LoadUserByUsername class in our SimpleBankUserDetails class, we can get rid of that class all together
+
+## CORS(Cross-Origin Resource Sharing) & CSRF(Cross-Site Request Forgery) with Spring Security
+
 
 
 
