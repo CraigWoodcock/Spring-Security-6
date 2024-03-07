@@ -1,5 +1,6 @@
 package org.sparta.cw.springsecurity.config;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
@@ -13,23 +14,38 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.provisioning.JdbcUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
 
 import javax.sql.DataSource;
+import java.util.Collections;
 
-    @Configuration
+import static javax.management.Query.and;
+
+@Configuration
     public class SecurityConfig {
 
         // Custom security filter allows authenticated traffic to secured endpoints and allows all traffic to
         // unsecured endpoints.
         @Bean
         SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
-            http
-                    .csrf((csrf) -> csrf.disable())
-                    .authorizeHttpRequests((requests) -> requests
-                    .requestMatchers("/myAccount","/myCards", "/myLoans", "/myBalance").authenticated()
+            http.cors().configurationSource(new CorsConfigurationSource() {
+                @Override
+                public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
+                    CorsConfiguration config = new CorsConfiguration();
+                    config.setAllowedOrigins(Collections.singletonList("http://localhost:4200"));
+                    config.setAllowedMethods(Collections.singletonList("*"));
+                    config.setAllowCredentials(true);
+                    config.setAllowedHeaders(Collections.singletonList("*"));
+                    config.setMaxAge(3600L);
+                    return config;
+                }
+            }).and().csrf().disable()
+                .authorizeHttpRequests((requests) -> requests
+                    .requestMatchers("/myAccount","/myCards", "/myLoans", "/myBalance", "/user").authenticated()
                     .requestMatchers("/notices", "/contact", "/welcome","/register").permitAll());
-                    http.formLogin(Customizer.withDefaults());
-                    http.httpBasic(Customizer.withDefaults());
+                http.formLogin(Customizer.withDefaults());
+                http.httpBasic(Customizer.withDefaults());
             return http.build();
         }
 

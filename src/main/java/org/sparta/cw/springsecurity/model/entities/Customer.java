@@ -30,8 +30,8 @@ public class Customer {
     @Column(name = "role", nullable = false, length = 100)
     private String role;
 
-    @Column(name = "create_dt")
-    private LocalDate createDt;
+    @Column(name = "create_dt" )
+    private String createDt;
 
     public Integer getId() {
         return id;
@@ -89,11 +89,11 @@ public class Customer {
         this.role = role;
     }
 
-    public LocalDate getCreateDt() {
+    public String getCreateDt() {
         return createDt;
     }
 
-    public void setCreateDt(LocalDate createDt) {
+    public void setCreateDt(String createDt) {
         this.createDt = createDt;
     }
 
