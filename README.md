@@ -14,6 +14,7 @@
   - [Creating a Controller to Allow New Users to be Created.](#creating-a-controller-to-allow-new-users-to-be-created)
   - [Managing Passwords With PasswordEncoders.](#managing-passwords-with-passwordencoders)
   - [Implementing a Custom AuthenticationProvider.](#implementing-a-custom-authenticationprovider)
+  - [Adding Angular-UI files and Launching the Application.](#adding-angular-ui-files-and-launching-the-application)
   - [CORS(Cross-Origin Resource Sharing) \& CSRF(Cross-Site Request Forgery) with Spring Security](#corscross-origin-resource-sharing--csrfcross-site-request-forgery-with-spring-security)
   
 
@@ -564,7 +565,53 @@ We need to modify the 'supports' class to return a new UsernamePasswordAuthentic
 
 Now our AuthenticationProvider is doing the same job as the LoadUserByUsername class in our SimpleBankUserDetails class, we can get rid of that class all together
 
+## Adding Angular-UI files and Launching the Application.
+
+I have been given an Angular Application to use with my back end API. this application already contains the necessary components to work with my back end.
+
+The 'bank-app-ui' contains a package.json file, using a terminal, navigate into the 'bank-app-ui' folder to the same location as the package.json file, run `npm install -g @angular/cli` to install Angular CLI and then run `ng serve` to start the application.
+
+The app will be started on port 4200 : `http://localhost:4200/`.
+
+This is all we need to do to start the app since it is already configured to listen on port 8080, the same port that our back end runs on.
+
 ## CORS(Cross-Origin Resource Sharing) & CSRF(Cross-Site Request Forgery) with Spring Security
+
+CORS - Prevents communication between applications(we need to set rules for this to allow comms between our front end and back end).
+
+CSRF - Prevents data manipulation so we cannot use Create/Update requests(we need to set rules for this to allow our application to use these methods).
+
+Since we want our application to communicate with an Angular-UI front end application that runs on a different port number, we need to enable CORS and set some rules. We do this by adding configurations to our SecurityFilterChain in our SecurityConfig class :
+
+ - Here we have enabled csrf by commenting out that line and so the front end cannot make requests to create or update any databas recoords, not even on public endpoints. This will be rectified, this is to show the incremental changes we are making. 
+
+```
+ @Bean
+        SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
+            http.cors().configurationSource(new CorsConfigurationSource() {
+                @Override
+                public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
+                    CorsConfiguration config = new CorsConfiguration();
+                    config.setAllowedOrigins(Collections.singletonList("http://localhost:4200"));
+                    config.setAllowedMethods(Collections.singletonList("*"));
+                    config.setAllowCredentials(true);
+                    config.setAllowedHeaders(Collections.singletonList("*"));
+                    config.setMaxAge(3600L);
+                    return config;
+                }
+            }).and()
+//                    .csrf().disable()
+                .authorizeHttpRequests((requests) -> requests
+                    .requestMatchers("/myAccount","/myCards", "/myLoans", "/myBalance", "/user").authenticated()
+                    .requestMatchers("/notices", "/contact", "/welcome","/register").permitAll());
+                http.formLogin(Customizer.withDefaults());
+                http.httpBasic(Customizer.withDefaults());
+            return http.build();
+        }
+
+```
+
+
 
 
 

@@ -1,11 +1,11 @@
 package org.sparta.cw.springsecurity.controllers;
 
-import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
 import org.sparta.cw.springsecurity.model.entities.Customer;
 import org.sparta.cw.springsecurity.model.repositories.CustomerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -50,7 +50,7 @@ public class LoginController {
 
     @RequestMapping("/user")
     public Customer getUserDetailsAfterLogin(Authentication authentication){
-        List<Customer> customer = customerRepository.findByEmail(authentication.name());
+        List<Customer> customer = customerRepository.findByEmail(authentication.getName());
         if (customer.size()>0){
             return customer.get(0);
         }else {
