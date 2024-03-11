@@ -30,7 +30,7 @@ public class SimpleBankUsernamePwdAuthenticationProvider implements Authenticati
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         String username = authentication.getName();
         String pwd = authentication.getCredentials().toString();
-        List<Customer> customer = customerRepository.findByUsername(username);
+        List<Customer> customer = customerRepository.findByEmail(username);
         if (customer.size()>0){
             if (passwordEncoder.matches(pwd,customer.get(0).getPwd())){
                 List<GrantedAuthority> authorities = new ArrayList<>();

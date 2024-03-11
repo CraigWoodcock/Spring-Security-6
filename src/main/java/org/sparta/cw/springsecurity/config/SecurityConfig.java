@@ -40,9 +40,8 @@ import static javax.management.Query.and;
                     config.setMaxAge(3600L);
                     return config;
                 }
-            }).and()
-//                    .csrf().disable()
-                .authorizeHttpRequests((requests) -> requests
+            }).and().csrf().ignoringRequestMatchers("/contact", "/register")
+                    .and().authorizeHttpRequests((requests) -> requests
                     .requestMatchers("/myAccount","/myCards", "/myLoans", "/myBalance", "/user").authenticated()
                     .requestMatchers("/notices", "/contact", "/welcome","/register").permitAll());
                 http.formLogin(Customizer.withDefaults());
