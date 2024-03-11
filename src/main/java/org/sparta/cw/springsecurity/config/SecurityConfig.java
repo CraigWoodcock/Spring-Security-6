@@ -1,10 +1,12 @@
 package org.sparta.cw.springsecurity.config;
 
 import jakarta.servlet.http.HttpServletRequest;
+import org.sparta.cw.springsecurity.filter.CsrfCookieFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -14,6 +16,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.provisioning.JdbcUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
+import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 
@@ -29,7 +34,13 @@ import static javax.management.Query.and;
         // unsecured endpoints.
         @Bean
         SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
-            http.cors().configurationSource(new CorsConfigurationSource() {
+
+            CsrfTokenRequestAttributeHandler requestHandler = new CsrfTokenRequestAttributeHandler();
+            requestHandler.setCsrfRequestAttributeName("_csrf");
+            http.securityContext((context) -> context
+                            .requireExplicitSave(false))
+                    .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.ALWAYS))
+                    .cors(corsCustomizer -> corsCustomizer.configurationSource(new CorsConfigurationSource() {
                 @Override
                 public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
                     CorsConfiguration config = new CorsConfiguration();
@@ -40,9 +51,12 @@ import static javax.management.Query.and;
                     config.setMaxAge(3600L);
                     return config;
                 }
-            }).and().csrf().ignoringRequestMatchers("/contact", "/register")
-                    .and().authorizeHttpRequests((requests) -> requests
-                    .requestMatchers("/myAccount","/myCards", "/myLoans", "/myBalance", "/user").authenticated()
+            })).csrf((csrf) -> csrf.csrfTokenRequestHandler(requestHandler)
+                            .ignoringRequestMatchers("/contact", "/regster")
+                            .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))
+                            .addFilterAfter(new CsrfCookieFilter(), BasicAuthenticationFilter.class)
+                            .authorizeHttpRequests((requests) -> requests
+                            .requestMatchers("/myAccount","/myCards", "/myLoans", "/myBalance", "/user").authenticated()
                     .requestMatchers("/notices", "/contact", "/welcome","/register").permitAll());
                 http.formLogin(Customizer.withDefaults());
                 http.httpBasic(Customizer.withDefaults());
